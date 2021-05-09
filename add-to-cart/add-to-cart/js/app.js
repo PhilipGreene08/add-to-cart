@@ -13,149 +13,86 @@
     console.log(cartBtn);
     cartBtn.forEach(btn => {
         btn.addEventListener('click', e => {
-            console.log(`yes`);
+            if (e.target.parentElement.classList.contains('store-item-icon')) {
+                // console.log(e.target.parentElement) //gets shopping cart
+                // console.log(e.target.parentElement.previousElementSibling) // gets the photo container
+                // console.log(e.target.parentElement.previousElementSibling.src); //get the actual photo
+                let picture = e.target.parentElement.previousElementSibling.src
+                // console.log(picture.indexOf('img')); //returns 34 - we want it to return 37 to get "sweets-1.jpg"
+                let position = picture.indexOf('img') + 3 //adding 3 to the 34 gets us where we want to be - to grab the photo itself
+                let photoPath = picture.slice(position) //taking 34
+
+                const item = {}
+                item.img = `img-cart${photoPath}`
+                let name = e.target.parentElement.parentElement.nextElementSibling.children[0].children[0].textContent
+                item.name = name
+                let price = e.target.parentElement.parentElement.nextElementSibling.children[0].children[1].textContent
+                let formattedPrice = price.slice(1).trim()
+                item.price = formattedPrice
+
+                const cartItem = document.createElement('div');
+
+                cartItem.classList.add('cart-item', 'd-flix', 'justify-content-between', 'text-capitalize', 'my-3');
+
+                cartItem.innerHTML = `<div class="cart-item d-flex justify-content-between text-capitalize my-3"><img src="${item.img}" class="img-fluid rounded-circle" id="item-img" alt="">
+                              <div class="item-text"><p id="cart-item-title" class="font-weight-bold mb-0">${item.name}</p><span>$</span>
+                                <span id="cart-item-price" class="cart-item-price" class="mb-0">${item.price}</span></div><a href="#" id='cart-item-remove' class="cart-item-remove"><i class="fas fa-trash"></i></a></div>`;
+
+                const cart = document.getElementById('cart')
+                const cartTotal = document.querySelector('.cart-total-container')
+                cart.insertBefore(cartItem, cartTotal)
+
+                alert('item added to the cart')
+
+                showTotals();
+                //contoller()
+            }
         })
     })
 
 
+})();
+
+(function () {
+    const cart = document.getElementById('cart')
+    //const trashIcon = document.querySelectorAll('.fa-trash')
+    let items = document.querySelectorAll('.cart-item')
+    cart.addEventListener('click', e => {
+        if (e.target.classList.contains(`fa-trash`)) {
+            console.log(e.target.parentElement.parentElement);
+            e.target.parentElement.parentElement.remove();
+            
+        }
+
+        if (e.target.id === `clear-cart`) {
+            items.forEach(item => {
+                item.remove()
+            })
+            document.getElementById('cart-total').textContent = `0`
+            document.querySelector('.item-total').textContent = `0`
+            document.getElementById('item-count').textContent = 0
+        }
+    })
+    showTotals()
+
+    //console.log(cart);
 })()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // show cart
-
-// (function(){
-//     //target cart button
-//     const cartInfo = document.getElementById('cart-info');
-//     const cart = document.getElementById('cart');
-
-//     cartInfo.addEventListener('click', function(){
-//         cart.classList.toggle('show-cart');
-//     })
-
-
-// })();
-
-// // add items to the cart
-
-// (function(){
-
-// const cartBtn = document.querySelectorAll('.store-item-icon');
-
-// cartBtn.forEach(function(btn){
-//     btn.addEventListener('click', function(event){
-//         //make sure event fires only if it has a parent of a certain class.
-//         if(event.target.parentElement.classList.contains('store-item-icon')){
-
-//             let fullPath = event.target.parentElement.previousElementSibling.src;
-
-//             let pos = fullPath.indexOf('img') + 3; //use the 3 to get rid of the 'img' string
-
-//             let partPath = fullPath.slice(pos);
-
-//             const item = {};
-
-//             item.img = `img-cart${partPath}`;
-
-//             let name = event.target.parentElement.parentElement.nextElementSibling.children[0].children[0].textContent;
-
-//             item.name = name;
-
-//             let price = event.target.parentElement.parentElement.nextElementSibling.children[0].children[1].textContent;
-
-//             let finalPrice = price.slice(1).trim();
-
-//             item.price = finalPrice;
-
-//             const cartItem = document.createElement('div');
-
-//             cartItem.classList.add('cart-item', 'd-flix', 'justify-content-between', 'text-capitalize', 'my-3');
-
-//             cartItem.innerHTML = `<div class="cart-item d-flex justify-content-between text-capitalize my-3"><img src="${item.img}" class="img-fluid rounded-circle" id="item-img" alt="">
-//               <div class="item-text"><p id="cart-item-title" class="font-weight-bold mb-0">${item.name}</p><span>$</span>
-//                 <span id="cart-item-price" class="cart-item-price" class="mb-0">${item.price}</span></div><a href="#" id='cart-item-remove' class="cart-item-remove"><i class="fas fa-trash"></i></a></div>`;
-
-//         //select cart
-
-//         const cart = document.getElementById('cart');
-//         const total = document.querySelector('.cart-total-container');
-
-//         cart.insertBefore(cartItem, total);
-//         alert('item added to the cart');
-
-//         showTotals();
-
-//         }
-//     });
-// });
-
-// // show totals
-// function showTotals(){
-
-//     const total = [];
-//     const items = document.querySelectorAll('.cart-item-price');
-//     items.forEach(function(item){
-//         total.push(parseFloat(item.textContent));
-//     })
-
-//     const totalMoney = total.reduce(function(total, item){
-//         total += item;
-//         return total;
-//     },0);
-
-//     const finalMoney = totalMoney.toFixed(2);
-
-//     document.getElementById('cart-total').textContent = finalMoney;
-//     document.querySelector('.item-total').textContent = finalMoney;
-//     document.getElementById('item-count').textContent = total.length;
-// }
-
-// })();
-
-// //Things learned
-// //DOM traversal using previousElementSibling
-// //element.insertBefore
-// //reduct method
+function showTotals() {
+    const totals = []
+    const items = document.querySelectorAll('.cart-item-price');
+    items.forEach(item => {
+        totals.push(+item.textContent)
+    })
+
+    const totalDue = totals.reduce((finalTotal, item) => {
+        finalTotal += item
+        return finalTotal
+    })
+
+    const finalDue = totalDue.toFixed(2)
+
+    document.getElementById('cart-total').textContent = finalDue
+    document.querySelector('.item-total').textContent = finalDue
+    document.getElementById('item-count').textContent = totals.length
+}
